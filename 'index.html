@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>🎲 幸运抽签 · 香水 or 苹果耳机</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none}
+body{background:radial-gradient(circle at 30% 20%,#2b1e3a,#120e1c);min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:system-ui,-apple-system,sans-serif;padding:12px}
+.game{background:rgba(28,22,40,.85);backdrop-filter:blur(15px);border-radius:48px;box-shadow:0 25px 50px rgba(0,0,0,.8),0 0 0 2px rgba(255,215,140,.2) inset;padding:28px 20px;width:100%;max-width:400px;border:1px solid rgba(255,210,120,.3)}
+h1{text-align:center;font-size:1.9rem;font-weight:800;letter-spacing:2px;background:linear-gradient(135deg,#ffe9b0,#f5b83d,#ffdb8a);-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:4px}
+.sub{text-align:center;font-size:.82rem;color:#c0b3d6;margin-bottom:22px}
+.prizes{display:flex;gap:10px;margin-bottom:22px}
+.pcard{flex:1;background:rgba(20,16,30,.8);border-radius:26px;padding:14px 6px;text-align:center;border:1.5px solid rgba(255,215,120,.2);box-shadow:0 8px 0 #0d0914;transition:.3s}
+.pcard.hl{border-color:#f5c542;box-shadow:0 0 25px rgba(245,197,66,.5),0 8px 0 #0d0914;background:rgba(60,45,30,.9)}
+.pemo{font-size:3rem;line-height:1;margin-bottom:6px}
+.pname{font-size:.95rem;font-weight:700;color:#f0e9ff}
+.ptag{font-size:.6rem;color:#a896c0;margin-top:3px;letter-spacing:1px}
+.draw{width:100%;aspect-ratio:1/1;max-height:300px;margin:0 auto 20px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#3a2c4a,#1a1225);box-shadow:0 18px 0 #0b0710,0 0 0 3px #5a4a70 inset,0 0 40px rgba(200,150,255,.3);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.2s;border:2px solid rgba(255,215,120,.4);overflow:hidden;touch-action:manipulation}
+.draw:active{transform:scale(.97)}
+.draw.shake{animation:shk .6s}
+@keyframes shk{10%,90%{transform:translate3d(-2px,0,0)}20%,80%{transform:translate3d(4px,0,0)}30%,50%,70%{transform:translate3d(-8px,0,0)}40%,60%{transform:translate3d(8px,0,0)}}
+.dc{display:flex;flex-direction:column;align-items:center;text-align:center;padding:16px}
+.demo{font-size:5rem;line-height:1;filter:drop-shadow(0 8px 16px rgba(0,0,0,.7))}
+.dtxt{font-size:1.3rem;font-weight:800;color:#fff6e5;margin-top:10px;text-shadow:0 2px 8px #000}
+.dhint{font-size:.8rem;color:#bfb0d6;margin-top:6px;background:rgba(0,0,0,.4);padding:5px 14px;border-radius:40px}
+.result{background:rgba(15,12,22,.9);backdrop-filter:blur(10px);border-radius:32px;padding:20px 14px;margin-bottom:18px;border:2px solid rgba(255,215,120,.5);box-shadow:0 0 40px rgba(245,197,66,.3);display:none;text-align:center;animation:pop .4s cubic-bezier(.175,.885,.32,1.275)}
+@keyframes pop{0%{transform:scale(.8);opacity:0}100%{transform:scale(1);opacity:1}}
+.result.show{display:block}
+.remo{font-size:4rem;line-height:1;margin-bottom:6px}
+.rprize{font-size:1.9rem;font-weight:900;background:linear-gradient(135deg,#ffe9b0,#f5b83d);-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:2px;margin-bottom:4px}
+.rnote{font-size:.9rem;color:#d4c6e8;background:rgba(255,215,120,.1);padding:8px 14px;border-radius:40px;display:inline-block}
+.btns{display:flex;gap:12px;margin-top:6px}
+.btn{flex:1;background:#2f2640;border:none;border-radius:60px;padding:15px 8px;font-size:1rem;font-weight:700;color:#efe6ff;box-shadow:0 8px 0 #16101f,0 0 0 1px rgba(255,255,255,.05) inset;transition:.08s;cursor:pointer;touch-action:manipulation;border:1px solid rgba(255,215,120,.25)}
+.btn:active{transform:translateY(4px);box-shadow:0 4px 0 #16101f}
+.btn-pri{background:#f5c542;color:#1a1225;box-shadow:0 8px 0 #b3861e;font-weight:800}
+.btn-pri:active{box-shadow:0 4px 0 #b3861e}
+.btn-share{background:#07c160;color:#fff;box-shadow:0 8px 0 #056b3a}
+.btn-share:active{box-shadow:0 4px 0 #056b3a}
+.btn:disabled{opacity:.45;transform:translateY(4px);pointer-events:none}
+.share-preview{background:rgba(0,0,0,.3);border-radius:18px;padding:10px 14px;margin-top:10px;font-size:.78rem;color:#cbb8e6;border-left:4px solid #f5c542;text-align:left;word-break:break-word;display:none}
+.share-preview.show{display:block}
+.copy-btn{background:rgba(245,197,66,.15);border:none;color:#f5c542;font-size:.75rem;font-weight:600;margin-left:6px;padding:4px 10px;border-radius:20px;cursor:pointer}
+.tip{background:rgba(7,193,96,.12);border:1px dashed #07c160;border-radius:20px;padding:10px 12px;font-size:.72rem;color:#96e6b3;text-align:center;margin-top:14px;line-height:1.5}
+.foot{text-align:center;font-size:.65rem;color:#7a6b8f;margin-top:14px}
+</style>
+</head>
+<body>
+<div class="game">
+<h1>🎲 幸运抽签 🎲</h1>
+<div class="sub">香水 or 苹果耳机 · 抽到哪个买哪个</div>
+<div class="prizes">
+<div class="pcard" id="cp"><div class="pemo">🌸</div><div class="pname">香水</div><div class="ptag">LUCKY SCENT</div></div>
+<div class="pcard" id="ce"><div class="pemo">🎧</div><div class="pname">苹果耳机</div><div class="ptag">AIRPODS</div></div>
+</div>
+<div class="draw" id="drawArea">
+<div class="dc" id="drawContent"><div class="demo">🎰</div><div class="dtxt">点击抽签</div><div class="dhint">抽到哪个就买哪个</div></div>
+</div>
+<div class="result" id="resultCard">
+<div class="remo" id="rEmo">🌸</div><div class="rprize" id="rPrize">香水</div><div class="rnote" id="rNote">恭喜！已为你锁定香水</div>
+</div>
+<div class="share-preview" id="sharePreview"></div>
+<div class="btns"><button class="btn" id="resetBtn">⟳ 重置</button><button class="btn btn-pri" id="drawBtn">🎲 抽签</button></div>
+<div class="btns" style="margin-top:10px"><button class="btn btn-share" id="shareBtn">📤 分享给好友抽</button></div>
+<div class="tip">💡 微信内点击右上角「···」分享给朋友，一起抽！</div>
+<div class="foot">© 幸运抽签 · 愿赌服输</div>
+</div>
+<script>
+(function(){
+var P=[{id:'perfume',name:'香水',emoji:'🌸',note:'恭喜！已为你锁定香水'},{id:'earphone',name:'苹果耳机',emoji:'🎧',note:'恭喜！已为你锁定苹果耳机'}];
+var drawArea=document.getElementById('drawArea'),drawContent=document.getElementById('drawContent'),resultCard=document.getElementById('resultCard'),rEmo=document.getElementById('rEmo'),rPrize=document.getElementById('rPrize'),rNote=document.getElementById('rNote'),cp=document.getElementById('cp'),ce=document.getElementById('ce'),drawBtn=document.getElementById('drawBtn'),resetBtn=document.getElementById('resetBtn'),shareBtn=document.getElementById('shareBtn'),sharePreview=document.getElementById('sharePreview');
+var isDrawing=false,currentResult=null;
+function clearHl(){cp.classList.remove('hl');ce.classList.remove('hl')}
+function resetToIdle(){if(isDrawing)return;isDrawing=false;currentResult=null;clearHl();resultCard.classList.remove('show');drawArea.classList.remove('shake');drawContent.innerHTML='<div class="demo">🎰</div><div class="dtxt">点击抽签</div><div class="dhint">抽到哪个就买哪个</div>';drawBtn.disabled=false;drawBtn.textContent='🎲 抽签';sharePreview.classList.remove('show');sharePreview.innerHTML=''}
+function buildText(p){return p?'我抽中了「'+p.name+'」'+p.emoji+'！你也来试试手气吧～':'快来玩「幸运抽签」！香水 or 苹果耳机，抽到哪个买哪个！🎲'}
+function updatePreview(p){var t=buildText(p);sharePreview.innerHTML=t+' <button class="copy-btn" id="copyBtn">📋 复制</button>';sharePreview.classList.add('show');var cb=document.getElementById('copyBtn');if(cb){cb.addEventListener('click',function(e){e.stopPropagation();copyText(t)})}}
+function copyText(t){if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(function(){alert('文案已复制，去微信粘贴吧！')}).catch(function(){fb(t)})}else{fb(t)}}
+function fb(t){var ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');alert('文案已复制，去微信粘贴吧！')}catch(e){alert('复制失败，请长按选择文案手动复制')}document.body.removeChild(ta)}
+function performDraw(){if(isDrawing)return;isDrawing=true;drawBtn.disabled=true;drawBtn.textContent='抽签中...';resultCard.classList.remove('show');clearHl();drawArea.classList.add('shake');drawContent.innerHTML='<div class="demo">🌀</div><div class="dtxt">抽签中...</div><div class="dhint">好运正在赶来</div>';setTimeout(function(){var p=P[Math.floor(Math.random()*P.length)];currentResult=p;rEmo.textContent=p.emoji;rPrize.textContent=p.name;rNote.textContent=p.note;resultCard.classList.add('show');if(p.id==='perfume'){cp.classList.add('hl')}else{ce.classList.add('hl')}drawContent.innerHTML='<div class="demo">'+p.emoji+'</div><div class="dtxt">'+p.name+'</div><div class="dhint">抽中啦！</div>';drawArea.classList.remove('shake');isDrawing=false;drawBtn.disabled=false;drawBtn.textContent='🎲 再抽一次';updatePreview(p)},1200)}
+function shareResult(){var p=currentResult,t=buildText(p);if(navigator.share){navigator.share({title:'🎲 幸运抽签',text:t,url:window.location.href}).catch(function(){})}else{updatePreview(p);alert('💡 点击右上角「···」分享给好友！\n\n'+t)}}
+drawArea.addEventListener('click',function(e){e.stopPropagation();if(isDrawing)return;performDraw()});
+drawBtn.addEventListener('click',function(e){e.stopPropagation();performDraw()});
+resetBtn.addEventListener('click',function(e){e.stopPropagation();resetToIdle()});
+shareBtn.addEventListener('click',function(e){e.stopPropagation();shareResult()});
+resetToIdle();
+})();
+</script>
+</body>
+</html>
